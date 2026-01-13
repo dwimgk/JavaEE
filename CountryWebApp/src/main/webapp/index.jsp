@@ -17,7 +17,9 @@
     <form action="countries" method="GET" class="mb-3">
         <label for="countryName" class="form-label">Enter Country Name:</label>
         <input type="text" id="countryName" name="name" class="form-control"
-               placeholder="Enter FULL name or just a FRAGMENT" required>
+            placeholder="Enter FULL name or just a FRAGMENT"
+            value="${param.name}" required>
+
         <button type="submit" class="btn btn-danger mt-2">Search</button>
     </form>
 
@@ -106,6 +108,85 @@
         </tbody>
     </table>
 
+    <!-- Search history -->
+    <div class="mt-3">
+        <div class="d-flex align-items-center justify-content-between">
+            <h6 class="mb-2">Search history</h6>
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearHistory()">
+                Clear
+            </button>
+        </div>
+        <div id="history" class="d-flex flex-wrap gap-2"></div>
+    </div>
+
 </div>
+<script>
+    const HISTORY_KEY = "countrySearchHistory";
+
+    function getHistory() {
+        try {
+            return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function renderHistory() {
+        const history = getHistory();
+        const el = document.getElementById("history");
+        if (!el) return;
+
+        el.innerHTML = "";
+        if (history.length === 0) {
+            const span = document.createElement("span");
+            span.className = "text-muted";
+            span.textContent = "No searches yet.";
+            el.appendChild(span);
+            return;
+        }
+
+        history.forEach(term => {
+            const a = document.createElement("a");
+            a.className = "btn btn-outline-primary btn-sm";
+            a.href = "countries?name=" + encodeURIComponent(term);
+            a.textContent = term;
+            el.appendChild(a);
+        });
+    }
+
+    function saveToHistory(term) {
+        term = (term || "").trim();
+        if (!term) return;
+
+        let history = getHistory();
+
+        // unique (case-insensitive)
+        history = history.filter(x => x.toLowerCase() !== term.toLowerCase());
+        history.unshift(term);
+
+        // keep last 8
+        history = history.slice(0, 8);
+
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        renderHistory();
+    }
+
+    function clearHistory() {
+        localStorage.removeItem(HISTORY_KEY);
+        renderHistory();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        renderHistory();
+
+        // if the URL contains ?name=... then remember it
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get("name");
+        if (name) {
+            saveToHistory(name);
+        }
+    });
+</script>
+
 </body>
 </html>
