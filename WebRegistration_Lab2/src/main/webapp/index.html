@@ -1,10 +1,38 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Lab2 Users (JPA)</title>
+</head>
+<body>
+  <h2>Users Lab (JPA)</h2>
+
+  <h3>List all users</h3>
+  <form action="UserServlet" method="get">
+    <input type="hidden" name="action" value="list">
+    <button type="submit">Show all users</button>
+  </form>
+
+  <h3>Create user</h3>
+  <form action="UserServlet" method="post">
+    <label>Name:</label>
+    <input type="text" name="name" required><br><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" required><br><br>
+
+    <label>Age:</label>
+    <input type="number" name="age" min="1" max="120" required><br><br>
+
+    <button type="submit">Create</button>
+  </form>
+
+  <h3>Delete user by ID</h3>
+  <form action="UserServlet" method="post">
+    <input type="hidden" name="_method" value="DELETE">
+    <label>ID:</label>
+    <input type="number" name="id" required>
+    <button type="submit">Delete</button>
+  </form>
+</body>
 </html>

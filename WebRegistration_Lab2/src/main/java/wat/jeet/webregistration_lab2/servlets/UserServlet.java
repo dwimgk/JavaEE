@@ -1,87 +1,87 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package wat.jeet.webregistration_lab2.servlets;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-/**
- *
- * @author Student
- */
-@WebServlet(name = "UserServlet", urlPatterns = {"/UserServlet"})
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
+import wat.jeet.webregistration_lab2.UsersLab;
+import wat.jeet.webregistration_lab2.UsersService;
+
+@WebServlet("/UserServlet")
 public class UserServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UserServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UserServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+    private UsersService service;
+
+    @Override
+    public void init() {
+        service = new UsersService();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    @Override
+    public void destroy() {
+        if (service != null) service.close();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        response.setContentType("text/html;charset=UTF-8");
+        String action = request.getParameter("action");
+        if (action == null) action = "home";
+
+        try (PrintWriter out = response.getWriter()) {
+            out.println("<html><body>");
+            out.println("<h2>Users (JPA)</h2>");
+
+            if ("list".equals(action)) {
+                List<UsersLab> users = service.findAll();
+                out.println("<table border='1' cellpadding='5'>");
+                out.println("<tr><th>ID</th><th>Name</th><th>Email</th><th>Age</th><th>Date</th></tr>");
+                for (UsersLab u : users) {
+                    out.println("<tr>");
+                    out.println("<td>" + u.getId() + "</td>");
+                    out.println("<td>" + u.getName() + "</td>");
+                    out.println("<td>" + u.getEmail() + "</td>");
+                    out.println("<td>" + u.getAge() + "</td>");
+                    out.println("<td>" + u.getRegistrationDate() + "</td>");
+                    out.println("</tr>");
+                }
+                out.println("</table>");
+            } else {
+                out.println("<p>Use index.html to create/list/delete users.</p>");
+            }
+
+            out.println("<form action='index.html'>");
+            out.println("<button type='submit'>Back</button>");
+            out.println("</form>");
+            out.println("</body></html>");
+        }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        String methodOverride = request.getParameter("_method");
+        if ("DELETE".equalsIgnoreCase(methodOverride)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            service.deleteById(id);
+            response.sendRedirect("UserServlet?action=list");
+            return;
+        }
+
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        int age = Integer.parseInt(request.getParameter("age"));
+
+        service.create(name, email, age);
+        response.sendRedirect("UserServlet?action=list");
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

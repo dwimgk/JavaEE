@@ -10,12 +10,14 @@
     <class>wat.jeet.webregistration_lab2.UsersLab</class>
 
     <properties>
-      <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
-      <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:~/Users"/>
-      <property name="jakarta.persistence.jdbc.user" value="sa"/>
-      <property name="jakarta.persistence.jdbc.password" value=""/>
+        <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+        <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"/>
+        <property name="jakarta.persistence.jdbc.user" value="sa"/>
+        <property name="jakarta.persistence.jdbc.password" value=""/>
 
-      <property name="eclipselink.logging.level" value="FINE"/>
+        <!-- make tests auto-create tables -->
+        <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+
     </properties>
   </persistence-unit>
 
