@@ -7,6 +7,7 @@ public class StatefulCalculator
         implements StatefulCalculatorLocal, StatefulCalculatorRemote {
 
     private long lastAccess = -1;
+    
 
     @Override
     public String performCalculations() {

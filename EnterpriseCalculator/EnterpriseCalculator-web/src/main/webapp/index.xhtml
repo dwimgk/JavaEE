@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:b="http://bootsfaces.net/ui">
+
+<h:head>
+    <title>Calculation Form</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</h:head>
+
+<h:body>
+    <h:form>
+
+        <b:panel look="default" title="Calculation Form">
+            <b:row>
+                <b:column col-md="6">
+                    <b:label value="Select Calculation Type" />
+                    <b:selectOneMenu id="componentType" value="#{calculationBean.componentType}">
+                        <f:selectItem itemValue="stateful" itemLabel="Stateful" />
+                        <f:selectItem itemValue="stateless" itemLabel="Stateless" />
+                    </b:selectOneMenu>
+                </b:column>
+
+                <b:column col-md="6">
+                    <b:label value="Select Interface Type" />
+                    <b:selectOneMenu id="interfaceType" value="#{calculationBean.interfaceType}">
+                        <f:selectItem itemValue="local" itemLabel="Local" />
+                        <f:selectItem itemValue="remote" itemLabel="Remote" />
+                    </b:selectOneMenu>
+                </b:column>
+            </b:row>
+
+            <b:row>
+                <b:column col-md="2">
+                    <b:commandButton value="Submit"
+                                     action="#{calculationBean.performCalculation}"
+                                     look="primary"
+                                     update="resultsTable" />
+                    <b:commandButton value="Refresh" look="info" update="resultsTable">
+                        <f:ajax execute="@form" render="resultsTable" />
+                    </b:commandButton>
+
+                </b:column>
+            </b:row>
+        </b:panel>
+
+        <b:panel look="info" title="Calculation Results">
+            <b:dataTable id="resultsTable" value="#{calculationBean.results}" var="result">
+                <b:dataTableColumn label="ID">
+                    <h:outputText value="#{result.id}" />
+                </b:dataTableColumn>
+                <b:dataTableColumn label="Component">
+                    <h:outputText value="#{result.componentType}" />
+                </b:dataTableColumn>
+                <b:dataTableColumn label="Interface">
+                    <h:outputText value="#{result.interfaceType}" />
+                </b:dataTableColumn>
+                <b:dataTableColumn label="Result">
+                    <h:outputText value="#{result.result}" />
+                </b:dataTableColumn>
+                <b:dataTableColumn label="User Agent">
+                    <h:outputText value="#{result.userAgent}" />
+                </b:dataTableColumn>
+            </b:dataTable>
+        </b:panel>
+
+    </h:form>
+</h:body>
+</html>
